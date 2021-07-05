@@ -1,0 +1,9 @@
+DROP DATABASE IF EXISTS ${db};
+DROP OWNED BY ${user};
+DROP USER IF EXISTS ${user};
+
+CREATE USER ${user} WITH ENCRYPTED PASSWORD '${password}';
+GRANT ${user} TO prodadmin;
+CREATE DATABASE ${db} OWNER ${user};
+GRANT ALL PRIVILEGES ON DATABASE ${db} TO ${user};
+GRANT CONNECT ON DATABASE ${db} TO ${user};

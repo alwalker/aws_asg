@@ -1,0 +1,41 @@
+{
+    "variables": {
+        "ci_pipeline_id": "{{env `CI_PIPELINE_ID`}}"
+    },
+    "builders": [
+        {
+            "access_key": "{{user `aws_access_key`}}",
+            "ami_name": "$CUSTOMER-api-{{user `ci_pipeline_id`}}",
+            "instance_type": "t3a.nano",
+            "region": "us-east-1",
+            "vpc_id": "vpc-",
+            "subnet_id": "subnet-",
+            "associate_public_ip_address": true,
+            "secret_key": "{{user `aws_secret_key`}}",
+            "ssh_username": "centos",
+            "security_group_id": "sg-",
+            "iam_instance_profile": "packer",
+            "source_ami_filter": {
+                "filters": {
+                    "virtualization-type": "hvm",
+                    "name": "CentOS Stream*",
+                    "root-device-type": "ebs",
+                    "architecture": "x86_64"
+                },
+                "owners": ["125523088429"],
+                "most_recent": true
+            },
+            "type": "amazon-ebs"
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "shell",
+            "environment_vars": [
+                "CI_PIPELINE_ID={{user `ci_pipeline_id`}}"
+            ],
+            "execute_command": "sudo  bash -c '{{ .Vars }} {{ .Path }}'",
+            "script": "./build_ami.sh"
+        }
+    ]
+}
